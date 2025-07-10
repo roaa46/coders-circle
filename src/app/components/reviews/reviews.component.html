@@ -1,0 +1,76 @@
+<div class="reviews-container">
+  <div class="reviews-header">
+    <h1>All Reviews</h1>
+    <button 
+      *ngIf="currentUser" 
+      class="btn btn-primary" 
+      routerLink="/create-review"
+    >
+      Create New Review
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading reviews...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && reviews.length === 0" class="empty-state">
+    <div class="empty-icon">📝</div>
+    <h3>No Reviews Yet</h3>
+    <p>Be the first to share a review!</p>
+    <button *ngIf="currentUser" class="btn btn-primary" routerLink="/create-review">
+      Create First Review
+    </button>
+  </div>
+
+  <div class="reviews-grid" *ngIf="!loading && reviews.length > 0">
+    <div class="review-card" *ngFor="let review of reviews">
+      <div class="review-header">
+        <h3 class="review-title" (click)="viewReview(review.id!)">{{ review.title }}</h3>
+        <div class="review-actions" *ngIf="canEditReview(review)">
+          <button class="btn-icon" (click)="editReview(review.id!)" title="Edit">
+            ✏️
+          </button>
+          <button class="btn-icon delete" (click)="deleteReview(review.id!)" title="Delete">
+            🗑️
+          </button>
+        </div>
+      </div>
+      
+      <div class="review-content">
+        <p>{{ review.content | slice:0:200 }}{{ review.content.length > 200 ? '...' : '' }}</p>
+      </div>
+      
+      <div class="review-meta">
+        <div class="author" *ngIf="review.user">
+          <span class="author-icon">👤</span>
+          <span>{{ review.user.name }}</span>
+        </div>
+        
+        <div class="resources" *ngIf="review.resources && review.resources.length > 0">
+          <span class="resources-label">Resources:</span>
+          <div class="resource-icons">
+            <span 
+              *ngFor="let resource of review.resources" 
+              class="resource-icon"
+              [title]="resource.url"
+            >
+              {{ getResourceIcon(resource.type) }}
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-footer">
+        <button class="btn btn-outline" (click)="viewReview(review.id!)">
+          Read More
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
